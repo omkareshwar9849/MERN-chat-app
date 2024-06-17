@@ -7,12 +7,12 @@ export const signup = async (req, res) => {
         const { fullName, username, password, confirmPassword, gender } = req.body;
 
         if (password !== confirmPassword) {
-            return res.status(400).json({ message: "passwords do not match" });
+            return res.status(400).json({ error: "passwords do not match" });
         }
 
         const user = await User.findOne({ username });
         if (user) {
-            return res.status(400).json({ message: "user already exists" });
+            return res.status(400).json({ error: "user already exists" });
         }
 
         const salt = await bcryptjs.genSalt(10);
@@ -53,7 +53,7 @@ export const login = async (req, res) => {
         const user = await User.findOne({ username });
         const isPasswordCorrect = await bcryptjs.compare(password, user?.password || "");
         if (!isPasswordCorrect || !user) {
-            return res.status(400).json({ message: "Invalid username or password" });
+            return res.status(400).json({ error: "Invalid username or password" });
         }
 
         generateTokenAndSetCookie(user._id, res);
